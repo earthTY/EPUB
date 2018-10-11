@@ -6,7 +6,7 @@
       </div>
     </transition>
     <transition name="slide-up">
-      <div class="foot_container" v-show="showMenu">
+      <div class="foot_container" v-show="showMenu" :class="{'hideBoxShodow':ifShowSetting}">
         <span class="icon-menu icon"></span>
         <span class="icon-progress icon"></span>
         <span class="icon-bright icon" @click="showSetting"></span>
@@ -57,6 +57,10 @@
       height: px2rem(48);
       background: white;
       box-shadow: 0 px2rem(-3) px2rem(8) rgba(0,0,0,.15);
+
+      &.hideBoxShodow{
+        box-shadow: none;
+      }
     }
 
     .setting-bar{
