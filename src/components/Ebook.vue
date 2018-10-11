@@ -1,28 +1,48 @@
 <template>
   <div class="ebook">
+    <TitleBar :showMenu="showMenu"/>
     <div class="book_container">
       <div id="read">
       </div>
       <div class="topView">
         <div class="viewleft" @click="prevPage"></div>
-        <div class="center"></div>
+        <div class="center" @click="toggleShowMenu"></div>
         <div class="viewright" @click="nextPage"></div>
       </div>
     </div>
+    <MenuBar :showMenu="showMenu" ref="menuBar"/>
   </div>
 </template>
 
 <script>
+  import TitleBar from "@/components/TitleBar"
+  import MenuBar from "@/components/MenuBar"
   import Epub from 'epubjs'
   const EPUB_URL = "/static/197803.epub"
   export default {
-    created() {
+    components:{
+      TitleBar,
+      MenuBar
+    },
+    data() {
+      return {
+        showMenu: false
+      }
+    },
+    mounted() {
       this.showEpub()
+
+      var that = this
+      window.onresize=function() {
+        that.showEpub()
+      }
     },
     methods: {
       showEpub() {
         //创建Epub对象
         this.book = new Epub(EPUB_URL)
+
+        document.getElementById("read").innerHTML = ""
 
         this.radition = this.book.renderTo("read", {width: window.innerWidth, height: window.innerHeight});
 
@@ -37,17 +57,26 @@
         if(this.radition){
           this.radition.next()
         }
+      },
+      toggleShowMenu() {
+        this.showMenu = !this.showMenu
+
+        if(!this.showMenu){
+          this.$refs.menuBar.hideSetting()
+        }
       }
     }
   }
 
 </script>
-
 <style lang="scss" scoped>
   @import '../assets/style/global';
 
   .book_container{
     position: relative;
+    width: 100%;
+    overflow: hidden;
+
 
     .topView{
 
@@ -69,4 +98,39 @@
       }
     }
   }
+
+  .title_container{
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 101;
+    width: 100%;
+    height: px2rem(48);
+    background: white;
+    box-shadow: 0 px2rem(5) px2rem(8) rgba(0,0,0,.15);
+    justify-content: space-between;
+    padding: 0 px2rem(10);
+
+    .right{
+      .icon-cart{
+        font-size: px2rem(21);
+      }
+    }
+  }
+
+  .foot_container{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: px2rem(48);
+    background: white;
+    box-shadow: 0 px2rem(-3) px2rem(8) rgba(0,0,0,.15);
+  }
+
+
 </style>
