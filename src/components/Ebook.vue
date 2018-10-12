@@ -10,7 +10,7 @@
         <div class="viewright" @click="nextPage"></div>
       </div>
     </div>
-    <MenuBar :showMenu="showMenu" ref="menuBar"/>
+    <MenuBar :showMenu="showMenu" :defaultTheme="defaultTheme" :themesList="themesList" :fontSizeList="fontSizeList" :defaultFontSize="defaultFontSize" @settingFontSize="settingFontSize" ref="menuBar"/>
   </div>
 </template>
 
@@ -26,7 +26,52 @@
     },
     data() {
       return {
-        showMenu: false
+        showMenu: false,
+
+        fontSizeList: [12,14,16,18,20,22,24],
+
+        defaultFontSize:16,
+
+        themesList: [
+          {
+            name:"默认",
+            style:{
+              'body':{
+                color:'#000',
+                background:'#fff'
+              }
+            }
+          },
+          {
+            name:"护眼",
+            style:{
+              'body':{
+                color:'#000',
+                background:'#3a8a16'
+              }
+            }
+          },
+          {
+            name:"夜间",
+            style:{
+              'body':{
+                color:'#fff',
+                background:'#000'
+              }
+            }
+          },
+          {
+            name:"高亮",
+            style:{
+              'body':{
+                color:'#000',
+                background:'#fea'
+              }
+            }
+          }
+        ],
+
+        defaultTheme:1
       }
     },
     mounted() {
@@ -47,6 +92,17 @@
         this.radition = this.book.renderTo("read", {width: window.innerWidth, height: window.innerHeight});
 
         this.radition.display()
+
+        this.themes = this.radition.themes
+
+        this.themes.fontSize(this.defaultFontSize + "px")
+
+        var that = this
+        this.themesList.forEach((theme)=>{
+          that.themes.register(theme.name,theme.style)
+        })
+
+        this.setTheme(this.defaultTheme)
       },
       prevPage() {
         if(this.radition){
@@ -64,6 +120,15 @@
         if(!this.showMenu){
           this.$refs.menuBar.hideSetting()
         }
+      },
+      settingFontSize(fontSize) {
+        this.defaultFontSize = fontSize
+        if(this.themes){
+          this.themes.fontSize(fontSize + "px")
+        }
+      },
+      setTheme(index) {
+        this.themes.select(this.themesList[index].name)
       }
     }
   }
