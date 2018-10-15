@@ -9,7 +9,7 @@ import '@/assets/style/style.css'
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
+window.myVue=new Vue({
   el: '#app',
   router,
   components: { App },

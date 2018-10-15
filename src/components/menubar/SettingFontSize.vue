@@ -28,19 +28,7 @@
       }
     },
 
-    data() {
-      return {
-        ifShowSetting:false
-      }
-    },
-
     methods: {
-      showSetting() {
-        this.ifShowSetting = true
-      },
-      hideSetting() {
-        this.ifShowSetting = false
-      },
       settingFontSize(fontSize) {
         this.$emit("settingFontSize",fontSize)
       }

@@ -10,7 +10,19 @@
         <div class="viewright" @click="nextPage"></div>
       </div>
     </div>
-    <MenuBar :showMenu="showMenu" :defaultTheme="defaultTheme" :themesList="themesList" :fontSizeList="fontSizeList" :defaultFontSize="defaultFontSize" @settingFontSize="settingFontSize" ref="menuBar"/>
+    <MenuBar :showMenu="showMenu"
+             :defaultTheme="defaultTheme"
+             :themesList="themesList"
+             @settingFontSize="settingFontSize"
+
+             :fontSizeList="fontSizeList"
+             :defaultFontSize="defaultFontSize"
+             @setTheme="setTheme"
+
+             :loadProgress="loadProgress"
+             @onChangeProgress="onChangeProgress"
+
+             ref="menuBar"/>
   </div>
 </template>
 
@@ -71,7 +83,9 @@
           }
         ],
 
-        defaultTheme:1
+        defaultTheme:0,
+
+        loadProgress:false,
       }
     },
     mounted() {
@@ -91,18 +105,34 @@
 
         this.radition = this.book.renderTo("read", {width: window.innerWidth, height: window.innerHeight});
 
-        this.radition.display()
-
         this.themes = this.radition.themes
 
         this.themes.fontSize(this.defaultFontSize + "px")
 
+
+
         var that = this
         this.themesList.forEach((theme)=>{
-          that.themes.register(theme.name,theme.style)
+          this.themes.register(theme.name,theme.style)
         })
 
         this.setTheme(this.defaultTheme)
+
+        this.radition.display()
+
+        this.book.ready.then(()=>{
+           return this.book.locations.generate()
+        }).then((result) => {
+          this.loadProgress = true
+          this.locations = this.book.locations
+        })
+      },
+      onChangeProgress(progress){
+        var progress = progress / 100
+
+        var location = progress > 0 ? this.locations.cfiFromPercentage(progress) : 0
+
+        this.radition.display(location)
       },
       prevPage() {
         if(this.radition){
@@ -128,6 +158,7 @@
         }
       },
       setTheme(index) {
+        this.defaultTheme = index
         this.themes.select(this.themesList[index].name)
       }
     }
